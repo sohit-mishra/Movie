@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: url(https://images.unsplash.com/photo-1682685797366-715d29e33f9d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+            height: 100vh;
+            object-fit: cover;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            text-align: center;
+            padding: 50px 20px 20px;
+            font-size: 48px;
+            color: #cd623f;
+        }
+
+        input {
+            border: 2px solid #cd623f;
+            background-color: transparent;
+            width: 600px;
+            height: 40px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 0 auto 20px;
+            caret-color: #cd623f;
+            outline: none;
+            color: #cd623f;
+        }
+
+        input::placeholder {
+            color: #cd623f;
+        }
+
+        button {
+            width: 300px;
+            margin: 0 auto;
+            height: 20px;
+            padding: 5px 20px;
+            border: 2px solid #cd623f;
+            color: #fff;
+            height: 40px;
+            font-size: 20px;
+            background-color: #cd623f;
+            border-radius: 5px;
+        }
+
+        .box {
+            background: #ffffff;
+            width: 400px;
+            margin: 30px auto 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 30px 3px #ffffff;
+        }
+
+        .box img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+        }
+
+        .box .right {
+            padding: 20px 30px;
+        }
+
+        .box .right h3 {
+            font-size: 22px;
+            padding: 10px 0px 5px;
+            color: #646464;
+        }
+
+        .box .right p {
+            padding: 5px 0px;
+            color: #575757;
+            font-size: 18px;
+            height: 50px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .box .right span {
+            margin: 10px 0;
+            display: block;
+            color: #555555;
+        }
+
+        hr {
+            background-color: #555555;
+            border: 1px solid #555555;
+            outline: none;
+        }
+
+        .box .right .bottom {
+            display: grid;
+            grid-template-columns: auto auto;
+            margin-top: 10px;
+            text-align: left;
+        }
+        .bottom h4:nth-child(2){
+            text-align: right;
+        }
+        .box .right .bottom h4 {
+            color: #555555;
+            font-size: 18px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Movie Search</h2>
+        <input type="text" placeholder="Please Enter Movie Name" onkeyup="search(event)" />
+        <button id="searchMovie">Search Now</button>
+
+        <div class="box">
+        </div>
+
+    </div>
+</body>
+
+</html>
+
+<script>
+    var searchMovie = document.querySelector("#searchMovie");
+    function search(e) {
+        if (e.key === "Enter") {
+            searchMovie.click();
+        }
+    }
+
+    searchMovie.addEventListener('click', () => {
+        var API_KEY = '839d8529';
+        var searchMovie = document.querySelector("input").value;
+
+        fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&t=${searchMovie}`)
+            .then(function (res) {
+                return res.json()
+            })
+            .then(function (res) {
+                displayData(res)
+            })
+            .catch(function (err) {
+                console.log(err)
+            })
+    })
+
+    function displayData(res) {
+        if(res.Response === 'True'){
+        var box = document.querySelectorAll('.box')[0];
+        box.innerHTML = "";
+        var divleft = document.createElement('div');
+        divleft.classList.add('left');
+
+        var img = document.createElement('img');
+        img.src = res.Poster;
+
+        divleft.append(img);
+
+
+        var title = document.createElement('h3');
+        title.textContent = res.Title;
+        var para = document.createElement('p');
+        para.textContent = res.Plot;
+        var span = document.createElement('span');
+        span.textContent = res.Genre;
+        var hr = document.createElement('hr');
+
+        var div = document.createElement('div');
+        div.classList.add('bottom');
+
+        var h1 = document.createElement('h4');
+        h1.textContent = res.Released;
+        var h2 = document.createElement('h4');
+        h2.textContent = res.Country;
+        var h3 = document.createElement('h4');
+        h3.textContent = res.Director;
+
+        div.append(h1, h2, h3);
+
+        var right = document.createElement('div');
+        right.classList.add('right');
+        right.append(title, para, span, hr, div);
+
+
+        box.append(divleft, right);
+    }else{
+        alert("Please write a Movie name");
+    }
+}
+
+</script>
